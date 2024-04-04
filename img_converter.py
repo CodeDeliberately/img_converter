@@ -52,7 +52,7 @@ if data:
 
     x = 0
     y = 0
-    ouput = "void draw_{0}() {1}".format(func_name, "{")
+    output = "void draw_{0}() {1}\n".format(func_name, "{")
     for k in range(width):
         for j in range(height):
             if suppress_blk:
@@ -66,7 +66,7 @@ if data:
                         x = 0
                         y += 1
                     continue
-            ouput += "\tmatrix.drawPixel({0}, {1}, matrix.color565({2}, {3}, {4}));\n".format(
+            output += "\tmatrix.drawPixel({0}, {1}, matrix.color565({2}, {3}, {4}));\n".format(
                 x,
                 y,
                 pixels[x * width + y][0],
@@ -77,9 +77,7 @@ if data:
             if x >= width:
                 x = 0
                 y += 1
-    ouput += "}\n"
-    code = st.text_area("Copy This Code", value=ouput, key="code")
+    output += "}\n"
+    # code = st.text_area("Copy This Code", value=ouput, key="code")
+    st.code(output, language="C++")
     # print(ouput)
-    if st.button("Copy to Cipboard"):
-        pyperclip.copy(code)
-        st.success("Code Copied!")
