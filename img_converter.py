@@ -13,7 +13,7 @@ suppress_blk = "Q"
 
 st.sidebar.header(":rainbow[Options]")
 
-while suppress_blk.lower() not in ["yes", "n"]:
+while suppress_blk.lower() not in ["yes", "no"]:
     # suppress_blk = input("Do you want to suppress black pixels? (y/n)").lower()
     suppress_blk = st.sidebar.radio("Suppress black pixels?", ["Yes", "No"]).lower()
 
@@ -34,7 +34,7 @@ data = st.sidebar.file_uploader(
 # img_name = data.name
 
 
-if suppress_blk.lower() == "yes":
+if suppress_blk == "yes":
     suppress_blk = 1
 else:
     suppress_blk = 0
