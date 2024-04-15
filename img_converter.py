@@ -11,13 +11,21 @@ import streamlit as st
 
 suppress_blk = "Q"
 
+st.sidebar.header(":rainbow[Options]")
 
-while suppress_blk not in ["y", "n"]:
+while suppress_blk.lower() not in ["yes", "n"]:
     # suppress_blk = input("Do you want to suppress black pixels? (y/n)").lower()
-    suppress_blk = st.radio("Supress black pixels?", ["y", "n"])
+    suppress_blk = st.sidebar.radio("Suppress black pixels?", ["Yes", "No"]).lower()
 
+allow_relative_position = st.sidebar.radio(
+    "Allow relative positioning?", ["Yes", "No"]
+).lower()
+if allow_relative_position == "yes":
+    allow_relative_position = True
+else:
+    allow_relative_position = False
 
-data = st.file_uploader(
+data = st.sidebar.file_uploader(
     "Upload you image", accept_multiple_files=False, type=["png", "jpg"]
 )
 
@@ -26,7 +34,7 @@ data = st.file_uploader(
 # img_name = data.name
 
 
-if suppress_blk == "y":
+if suppress_blk.lower() == "yes":
     suppress_blk = 1
 else:
     suppress_blk = 0
@@ -52,7 +60,10 @@ if data:
 
     x = 0
     y = 0
-    output = "void draw_{0}() {1}\n".format(func_name, "{")
+    if allow_relative_position:
+        output = "void draw_{0}(int x, int y) {1}\n".format(func_name, "{")
+    else:
+        output = "void draw_{0}() {1}\n".format(func_name, "{")
     for k in range(width):
         for j in range(height):
             if suppress_blk:
@@ -66,13 +77,22 @@ if data:
                         x = 0
                         y += 1
                     continue
-            output += "\tmatrix.drawPixel({0}, {1}, matrix.color565({2}, {3}, {4}));\n".format(
-                x,
-                y,
-                pixels[x * width + y][0],
-                pixels[x * width + y][1],
-                pixels[x * width + y][2],
-            )
+            if allow_relative_position:
+                output += "\tmatrix.drawPixel({0} + x, {1} + y, matrix.color565({2}, {3}, {4}));\n".format(
+                    x,
+                    y,
+                    pixels[x * width + y][0],
+                    pixels[x * width + y][1],
+                    pixels[x * width + y][2],
+                )
+            else:
+                output += "\tmatrix.drawPixel({0}, {1}, matrix.color565({2}, {3}, {4}));\n".format(
+                    x,
+                    y,
+                    pixels[x * width + y][0],
+                    pixels[x * width + y][1],
+                    pixels[x * width + y][2],
+                )
             x += 1
             if x >= width:
                 x = 0
